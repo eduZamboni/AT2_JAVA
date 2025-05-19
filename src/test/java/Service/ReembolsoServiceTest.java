@@ -24,4 +24,14 @@ class ReembolsoServiceTest {
         assertEquals(140.0, reembolso, 1e-9,
                 "Reembolso de 200 com 70% de cobertura deve ser 140");
     }
+
+    @Test
+    @DisplayName("calculateReembolso: casos limites com 0 e 100% de cobertura")
+    void calculateReembolso_edgeCases() {
+        assertEquals(0.0, service.calculateReembolso(0.0, 0.70), 1e-9);
+
+        assertEquals(0.0, service.calculateReembolso(200.0, 0.0), 1e-9);
+
+        assertEquals(200.0, service.calculateReembolso(200.0, 1.0), 1e-9);
+    }
 }
