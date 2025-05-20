@@ -1,10 +1,14 @@
 package service;
 
+import TP1.model.Consulta;
 import TP1.model.Paciente;
 import TP1.model.PlanoSaude;
+import TP1.service.AuditoriaSpy;
 import TP1.service.ReembolsoService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -63,5 +67,16 @@ class ReembolsoServiceTest {
         assertEquals(0.0, service.calculateReembolso(200.0, new Plano0Stub(), dummy), 1e-9);
 
         assertEquals(200.0, service.calculateReembolso(200.0, new Plano100Stub(), dummy), 1e-9);
+    }
+
+    @Test
+    @DisplayName("Deve chamar o serviço de auditoria ao registrar consulta")
+    void deveChamarAuditoriaAoRegistrarConsulta() {
+        AuditoriaSpy auditoria = new AuditoriaSpy();
+        Consulta consulta = new Consulta(new Paciente(), 100.0, LocalDate.now());
+
+        auditoria.registrarConsulta(consulta);
+
+        assertTrue(auditoria.foiRegistrado(), "Auditoria deveria ter sido chamada");
     }
 }
