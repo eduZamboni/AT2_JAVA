@@ -28,6 +28,10 @@ class ReembolsoServiceTest {
         consultaComPlanoZero = new Consulta(dummy, 200.0, LocalDate.now());
     }
 
+    private Consulta criarConsulta(double valor){
+        return new Consulta(dummy, valor, LocalDate.now());
+    }
+
     static class AutorizadorAlwaysAllowStub implements AutorizadorReembolso {
         @Override
         public boolean isAutorizado(Consulta consulta) {
@@ -67,7 +71,7 @@ class ReembolsoServiceTest {
         PlanoSaude plano = new Plano70Stub();
 
         // Execution
-        double reembolso = service.calculateReembolso(consultaComPlanoZero, plano, dummy);
+        double reembolso = service.calculateReembolso(criarConsulta(200.0), plano, dummy);
 
         // Assertion
         assertEquals(140.0, reembolso, 1e-9,
@@ -78,11 +82,11 @@ class ReembolsoServiceTest {
     @DisplayName("calculateReembolso: casos limites com 0 e 100% de cobertura")
     void calculateReembolso_edgeCases() {
 
-        assertEquals(140.0, service.calculateReembolso(consultaComPlanoZero, new Plano70Stub(), dummy), 1e-9);
+        assertEquals(140.0, service.calculateReembolso(criarConsulta(200.0), new Plano70Stub(), dummy), 1e-9);
 
-        assertEquals(0.0, service.calculateReembolso(consultaComPlanoZero, new Plano0Stub(), dummy), 1e-9);
+        assertEquals(0.0, service.calculateReembolso(criarConsulta(200.0), new Plano0Stub(), dummy), 1e-9);
 
-        assertEquals(200.0, service.calculateReembolso(consultaComPlanoZero, new Plano100Stub(), dummy), 1e-9);
+        assertEquals(200.0, service.calculateReembolso(criarConsulta(200.0), new Plano100Stub(), dummy), 1e-9);
     }
 
     @Test
@@ -102,7 +106,7 @@ class ReembolsoServiceTest {
         AutorizadorReembolso autorizadorMock = Mockito.mock(AutorizadorReembolso.class);
         ReembolsoService service = new ReembolsoService(autorizadorMock);
 
-        Consulta consulta = new Consulta(new Paciente(), 100.0, LocalDate.now());
+        Consulta consulta = criarConsulta(100.0);
         PlanoSaude plano = () -> 0.8; // lambda como stub
 
         // Simula não autorizado
@@ -114,5 +118,6 @@ class ReembolsoServiceTest {
         });
 
         assertEquals("Consulta não autorizada para reembolso.", ex.getMessage());
+
+        }
     }
-}
